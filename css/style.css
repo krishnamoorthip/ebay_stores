@@ -1,0 +1,71 @@
+.help-block {
+    color: #D16E6C!important;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.no-right-padding {
+    padding-right: 0;
+}
+
+.no-left-padding {
+    padding-left: 0;
+}
+
+#preview img, #product_asset_images_preview img {
+    width: 25%;
+    margin-right: 5px;
+    height: auto;
+}
+
+.no-padding-top {
+    padding-top: 0;
+}
+
+.preview {
+    text-align: left;
+    overflow: hidden;
+    clear: both;
+    padding-top: 10px;
+}
+
+.preview img {
+    width: 50%;
+}
+
+textarea.col-xs-12, textarea.col-sm-6 {
+    padding: 5px 4px 6px;
+}
+
+.vertical-middle {
+    vertical-align: middle!important;
+}
+
+.ui-datepicker {
+    width: inherit!important;
+}
+
+.nav-search {
+    position: relative!important;
+    top: -8px!important;
+    right: 0!important;
+}
+
+#rates_table .tab-content, #vendor_management .tab-content {
+    overflow: hidden;
+}
+
+.hide {
+    display: none;
+}
+
+.form-horizontal .form-group {
+    margin-left: 0px!important;
+    margin-right: 0px!important;
+}
+
+.table td {
+    word-break: break-all;
+}

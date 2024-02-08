@@ -1,0 +1,14 @@
+[23-Jul-2016 19:40:37 UTC] PHP Fatal error:  Class 'Slim\Middleware' not found in /home/screwjack/public_html/task_manager/libs/Slim/Middleware/Flash.php on line 48
+[23-Jul-2016 19:40:50 UTC] PHP Fatal error:  Class 'Slim\Middleware' not found in /home/screwjack/public_html/task_manager/libs/Slim/Middleware/ContentTypes.php on line 49
+[23-Jul-2016 19:41:04 UTC] PHP Fatal error:  Class 'Slim\Middleware' not found in /home/screwjack/public_html/task_manager/libs/Slim/Middleware/SessionCookie.php on line 58
+[24-Jul-2016 07:16:47 UTC] PHP Fatal error:  Class 'Slim\Middleware' not found in /home/screwjack/public_html/task_manager/libs/Slim/Middleware/MethodOverride.php on line 50
+[24-Jul-2016 07:24:54 UTC] PHP Fatal error:  Class 'Slim\Middleware' not found in /home/screwjack/public_html/task_manager/libs/Slim/Middleware/PrettyExceptions.php on line 46
+[25-Jul-2016 16:43:06 UTC] PHP Fatal error:  Class 'Slim\Middleware' not found in /home/screwjack/public_html/task_manager/libs/Slim/Middleware/Flash.php on line 48
+[04-Aug-2016 21:16:01 UTC] PHP Fatal error:  Class 'Slim\Middleware' not found in /home/screwjack/public_html/task_manager/libs/Slim/Middleware/Flash.php on line 48
+[14-Aug-2016 22:20:30 UTC] PHP Fatal error:  Class 'Slim\Middleware' not found in /home/screwjack/public_html/task_manager/libs/Slim/Middleware/Flash.php on line 48
+[25-Aug-2016 00:02:39 UTC] PHP Fatal error:  Class 'Slim\Middleware' not found in /home/screwjack/public_html/task_manager/libs/Slim/Middleware/Flash.php on line 48
+[04-Sep-2016 02:45:11 UTC] PHP Fatal error:  Class 'Slim\Middleware' not found in /home/screwjack/public_html/task_manager/libs/Slim/Middleware/Flash.php on line 48
+[14-Sep-2016 03:34:33 UTC] PHP Fatal error:  Class 'Slim\Middleware' not found in /home/screwjack/public_html/task_manager/libs/Slim/Middleware/Flash.php on line 48
+[14-Sep-2016 03:39:13 UTC] PHP Fatal error:  Class 'Slim\Middleware' not found in /home/screwjack/public_html/task_manager/libs/Slim/Middleware/ContentTypes.php on line 49
+[14-Sep-2016 03:39:23 UTC] PHP Fatal error:  Class 'Slim\Middleware' not found in /home/screwjack/public_html/task_manager/libs/Slim/Middleware/SessionCookie.php on line 58
+[14-Sep-2016 03:39:59 UTC] PHP Fatal error:  Class 'Slim\Middleware' not found in /home/screwjack/public_html/task_manager/libs/Slim/Middleware/MethodOverride.php on line 50
