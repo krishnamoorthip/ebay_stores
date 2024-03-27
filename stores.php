@@ -4,7 +4,7 @@ session_start();
 <!DOCTYPE html>
 <html lang="en">
     <?php include "basic_css.php"; ?>
-    <body class="no-skin" onload="buildStaffDropdown();showStoresPage();">
+    <body class="no-skin" onload="buildStaffDropdown();buildCategoryDropdown();showStoresPage();">
         <?php include "header.php"; ?>
         <div class="main-container ace-save-state" id="main-container">
             <div id="sidebar" class="sidebar responsive ace-save-state">
@@ -45,6 +45,8 @@ session_start();
                                                                     <option value="0">New</option>
                                                                     <option value="1">Contacted</option>
                                                                     <option value="2">Follow-up</option>
+                                                                    <option value="3">Unreachable</option>
+                                                                    <option value="4">Not live</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -54,6 +56,20 @@ session_start();
                                                                 <select id="filter_staff_id" name="filter_staff_id" class="form-control" onchange="showStoresPage();">
                                                                     <option value="">--All--</option>
                                                                 </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="filter_category_id">Category:</label>
+                                                                <select id="filter_category_id" name="filter_category_id" class="form-control" onchange="showStoresPage();">
+                                                                    <option value="">--All--</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label>&nbsp;</label>
+                                                                <label class="form-control"><input onchange="showStoresPage();" id="filter_nonassigned_id" name="filter_nonassigned_id" type="checkbox" /> Non Assigned Only</label>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -114,11 +130,24 @@ session_start();
                             <div class="row">
                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                     <div class="form-group">
+                                        <label for="update_staff_id">Category:</label>
+                                        <select name="update_category_id" id="update_category_id" class="form-control" data-placeholder="Click to Choose...">
+                                            <option value="">--Select one--</option>
+                                            <option value="1">Staff one</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                    <div class="form-group">
                                         <label for="update_is_contacted">Is Contacted?:</label>
                                         <select id="update_is_contacted" name="update_is_contacted" class="form-control" data-placeholder="Click to Choose...">
                                             <option value="">--Select Option--</option>
                                             <option value="1">Contacted</option>
                                             <option value="2">Follow-up</option>
+                                            <option value="3">Unreachable</option>
+                                            <option value="4">Not live</option>
                                             <option value="0">New</option>
                                         </select>
                                     </div>

@@ -1,5 +1,7 @@
 <?php
+
 session_start();
+
 class DbHandler {
 
     private $conn;
@@ -27,18 +29,26 @@ class DbHandler {
         return $res;
     }
 
-    public function getAllStores($status, $staff) {
+    public function getAllStores($status, $staff, $category, $nonassigned) {
         $res = array('error' => true, 'message' => 'No store found');
         $data = [];
         $staff_query = '';
         $status_query = '';
+        $category_query = '';
+        $nonassigned_query = '';
         if ($status != 'null') {
             $status_query = ' AND `s`.`is_contacted` = ' . $status;
         }
         if ($staff != 'null') {
             $staff_query = ' AND `s`.`staff_id` = ' . $staff;
         }
-        $result = $this->conn->query('SELECT `s`.`ID`, `s`.`store_identity`, `s`.`email_address`, `s`.`phone_number`, `s`.`store_link`, `st`.`name` AS staff, `s`.`comment`, `s`.`is_contacted`, `s`.`created_at`, `s`.`updated_at`  FROM `stores` AS `s` LEFT JOIN `staffs` AS st ON `st`.`ID` = `s`.`staff_id` WHERE `s`.`ID` > 0 ' . $status_query . $staff_query . ' ORDER BY `s`.`ID` DESC');
+        if ($category != 'null') {
+            $category_query = ' AND `s`.`category_id` = ' . $category;
+        }
+        if ($nonassigned != 'false') {
+            $nonassigned_query = ' AND (`s`.`staff_id` IS NULL OR `s`.`staff_id` = 0)';
+        }
+        $result = $this->conn->query('SELECT `s`.`ID`, `s`.`store_identity`, `c`.`name` AS `category`, `s`.`email_address`, `s`.`phone_number`, `s`.`store_link`, `st`.`name` AS staff, `s`.`comment`, `s`.`is_contacted`, `s`.`created_at`, `s`.`updated_at`  FROM `stores` AS `s` LEFT JOIN `staffs` AS st ON `st`.`ID` = `s`.`staff_id` LEFT JOIN `categories` AS c ON `c`.`ID` = `s`.`category_id` WHERE `s`.`ID` > 0 ' . $status_query . $staff_query . $category_query . $nonassigned_query . ' ORDER BY `s`.`ID` DESC');
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
                 $data[] = $row;
@@ -50,7 +60,7 @@ class DbHandler {
 
     public function updateStore($data) {
         $res = array('error' => true, 'message' => 'No update found');
-        $this->conn->query('UPDATE `stores` SET `comment` = \'' . $this->conn->real_escape_string($data['comment']) . '\', `is_contacted` = \'' . $data['is_contacted'] . '\', `email_address` = \'' . $data['email_address'] . '\', `phone_number` = \'' . $data['phone_number'] . '\', `staff_id` = \'' . $data['staff_id'] . '\', `updated_at` = \'' . date('Y-m-d H:i:s') . '\' WHERE `ID` = ' . $data['ID']);
+        $this->conn->query('UPDATE `stores` SET `comment` = \'' . $this->conn->real_escape_string($data['comment']) . '\', `is_contacted` = \'' . $data['is_contacted'] . '\', `email_address` = \'' . $data['email_address'] . '\', `phone_number` = \'' . $data['phone_number'] . '\', `staff_id` = \'' . $data['staff_id'] . '\', `category_id` = \'' . $data['category_id'] . '\', `updated_at` = \'' . date('Y-m-d H:i:s') . '\' WHERE `ID` = ' . $data['ID']);
         if ($this->conn->affected_rows > 0) {
             $res = array('error' => false, 'message' => 'Store updated successfully');
         }
@@ -162,6 +172,56 @@ class DbHandler {
         $this->conn->query('DELETE FROM `staffs` WHERE `ID` = ' . $id);
         if ($this->conn->affected_rows > 0) {
             $res = array('error' => false, 'message' => 'Staff deleted successfully');
+        }
+        return $res;
+    }
+
+    public function getAllCategory() {
+        $res = array('error' => true, 'message' => 'No category found');
+        $data = [];
+        $result = $this->conn->query('SELECT `ID`, `name` FROM `categories` ORDER BY `ID` DESC');
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
+            $res = array('error' => false, 'message' => 'Category found', 'data' => $data);
+        }
+        return $res;
+    }
+
+    public function addCategory($data) {
+        date_default_timezone_set('Asia/Kolkata');
+        $res = array('error' => true, 'message' => 'Unable to insert category');
+        $this->conn->query('INSERT INTO `categories` (`name`, `created_at`, `updated_at`) VALUES (\'' . $data['name'] . '\', \'' . date('Y-m-d H:i:s') . '\', \'' . date('Y-m-d H:i:s') . '\')');
+        if ($this->conn->affected_rows > 0) {
+            $res = array('error' => false, 'message' => 'Category added successfully');
+        }
+        return $res;
+    }
+
+    public function updateCategory($data) {
+        $res = array('error' => true, 'message' => 'No update found');
+        $this->conn->query('UPDATE `categories` SET `name` = \'' . $data['name'] . '\', `updated_at` = \'' . date('Y-m-d H:i:s') . '\' WHERE `ID` = ' . $data['ID']);
+        if ($this->conn->affected_rows > 0) {
+            $res = array('error' => false, 'message' => 'Category updated successfully');
+        }
+        return $res;
+    }
+
+    public function getCategoryById($id) {
+        $res = array('error' => true, 'message' => 'Unable to get category');
+        $result = $this->conn->query('SELECT * FROM `categories` WHERE `ID` = ' . $id);
+        if ($result->num_rows > 0) {
+            $res = array('error' => false, 'message' => 'Category fetched successfully', 'data' => $result->fetch_assoc());
+        }
+        return $res;
+    }
+
+    public function deleteCategoryById($id) {
+        $res = array('error' => true, 'message' => 'Unable to delete category');
+        $this->conn->query('DELETE FROM `categories` WHERE `ID` = ' . $id);
+        if ($this->conn->affected_rows > 0) {
+            $res = array('error' => false, 'message' => 'Category deleted successfully');
         }
         return $res;
     }

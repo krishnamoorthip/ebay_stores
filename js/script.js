@@ -13,6 +13,9 @@ function openModal(modal, id) {
     if (modal === 'update_keyword') {
         url = 'keyword';
     }
+    if (modal === 'update_category') {
+        url = 'category';
+    }
     if (modal === 'update_staff') {
         url = 'staff';
     }
@@ -34,6 +37,9 @@ function openModal(modal, id) {
                     $('#update_key').val(rs.result.data.keyword);
                     $('#update_is_refresh').val(rs.result.data.is_refresh);
                 }
+                if (modal === 'update_category') {
+                    $('#update_name').val(rs.result.data.name);
+                }
                 if (modal === 'update_staff') {
                     $('#update_name').val(rs.result.data.name);
                 }
@@ -51,21 +57,29 @@ function openModal(modal, id) {
 function showStoresPage() {
     var status = null;
     var lead_by = null;
+    var category = null;
+    var non_assigned = false;
     if ($('#filter_status').val() != '') {
         status = $('#filter_status').val();
     }
     if ($('#filter_staff_id').val() != '') {
         lead_by = $('#filter_staff_id').val();
     }
+    if ($('#filter_category_id').val() != '') {
+        category = $('#filter_category_id').val();
+    }
+    if ($('#filter_nonassigned_id').is(":checked")) {
+        non_assigned = true;
+    }
     var api = new $.RestClient('v1/index.php/');
-    api.add('master', {url: 'store/' + status + '/' + lead_by, stripTrailingSlash: true});
+    api.add('master', {url: 'store/' + status + '/' + lead_by + '/' + category + '/' + non_assigned, stripTrailingSlash: true});
     var result = api.master.read();
     result.done(function (rs) {
         $('#tab1_table').empty();
         $('#tab1_count').html(0);
         if (rs.result.error === false) {
             var table = '<table id="tab1_datatable" class="table table-striped table-bordered table-hover">';
-            table = table + '<thead><tr><th>SL. No.</th><th>Store ID</th><th>Link</th><th>Email</th><th>Phone</th><th>Comment</th><th>Status</th><th>Lead By</th><th>Updated On</th><th></th></tr></thead><tbody>';
+            table = table + '<thead><tr><th>SL. No.</th><th>Store ID</th><th>Link</th><th>Email</th><th>Phone</th><th>Comment</th><th>Status</th><th>Category</th><th>Lead By</th><th>Updated On</th><th></th></tr></thead><tbody>';
             $.each(rs.result.data, function (index, row) {
                 var status = 'N/A';
                 switch (row.is_contacted) {
@@ -81,17 +95,25 @@ function showStoresPage() {
                     case 2:
                         status = 'Follow-up';
                         break;
+                    case '3':
+                    case 3:
+                        status = 'Unreachable';
+                        break;
+                    case '4':
+                    case 4:
+                        status = 'Not live';
+                        break;
                     default:
                         break;
                 }
-                table = table + '<tr><td>' + (index + 1) + '</td><td>' + row.store_identity + '</td><td>' + row.store_link + '&nbsp;<a href="' + row.store_link + '" target="_blank"><i class="fa fa-external-link" aria-hidden="true"></i></a></td><td id="email_address_' + row.ID + '">' + row.email_address + '</td><td id="phone_number_' + row.ID + '">' + row.phone_number + '</td><td id="comment_' + row.ID + '">' + (removeTags(row.comment) && (removeTags(row.comment)).length > 200 ? (removeTags(row.comment).substring(0, 197) + '...&nbsp;<a class="pointer" onclick="openModal(\'update_store\', ' + row.ID + ');">Read more</a>') : removeTags(row.comment)) + '</td><td id="status_' + row.ID + '">' + status + '</td><td id="lead_by_' + row.ID + '">' + (row.staff ? row.staff : '-') + '</td><td>' + row.updated_at + '</td><td><a class="green pointer" onclick="openModal(\'update_store\', ' + row.ID + ');"><i class="ace-icon fa fa-comment bigger-130"></i></a></td></tr>';
+                table = table + '<tr><td>' + (index + 1) + '</td><td>' + row.store_identity + '</td><td>' + row.store_link + '&nbsp;<a href="' + row.store_link + '" target="_blank"><i class="fa fa-external-link" aria-hidden="true"></i></a></td><td id="email_address_' + row.ID + '">' + row.email_address + '</td><td id="phone_number_' + row.ID + '">' + row.phone_number + '</td><td id="comment_' + row.ID + '">' + (removeTags(row.comment) && (removeTags(row.comment)).length > 200 ? (removeTags(row.comment).substring(0, 197) + '...&nbsp;<a class="pointer" onclick="openModal(\'update_store\', ' + row.ID + ');">Read more</a>') : removeTags(row.comment)) + '</td><td id="status_' + row.ID + '">' + status + '</td><td id="category_' + row.ID + '">' + (row.category ? row.category : '-') + '</td><td id="lead_by_' + row.ID + '">' + (row.staff ? row.staff : '-') + '</td><td>' + row.updated_at + '</td><td><a class="green pointer" onclick="openModal(\'update_store\', ' + row.ID + ');"><i class="ace-icon fa fa-comment bigger-130"></i></a></td></tr>';
             });
             table = table + '</tbody></table>';
             $('#tab1_table').append(table);
             $('#tab1_count').html((rs.result.data).length);
             var cols = [
                 {"bSortable": false},
-                null, null, null, null, {"bSortable": false}, null, {"bSortable": false},
+                null, null, null, null, {"bSortable": false}, null, null, {"bSortable": false},
                 {"bSortable": false}, {"bSortable": false}
             ];
             dataTable('tab1_datatable', 'tab1', cols, 'eBay_stores_list');
@@ -124,6 +146,35 @@ function showKeywordsPage() {
                 null, null, null, {"bSortable": false}
             ];
             dataTable('tab1_datatable', 'tab1', cols, 'eBay_keywords_list');
+        } else {
+            $('#tab1_table').append(rs.result.message);
+        }
+    });
+    result.fail(function (err) {
+        swal('Error', err.responseJSON.result.message, 'error');
+    });
+}
+
+function showCategoriesPage() {
+    var api = new $.RestClient('v1/index.php/');
+    api.add('master', {url: 'category', stripTrailingSlash: true});
+    var result = api.master.read();
+    result.done(function (rs) {
+        $('#tab1_table').empty();
+        $('#tab1_count').html(0);
+        if (rs.result.error === false) {
+            var table = '<table id="tab1_datatable" class="table table-striped table-bordered table-hover">';
+            table = table + '<thead><tr><th>SL. No.</th><th>Category</th><th></th></tr></thead><tbody>';
+            $.each(rs.result.data, function (index, row) {
+                table = table + '<tr><td>' + (index + 1) + '</td><td>' + row.name + '</td><td><a class="green pointer" onclick="openModal(\'update_category\', ' + row.ID + ');"><i class="ace-icon fa fa-pencil bigger-130"></i></a>&nbsp;&nbsp;&nbsp;<a class="red pointer" onclick="removeCategory(' + row.ID + ');"><i class="ace-icon fa fa-trash-o bigger-130"></i></a></td></tr>';
+            });
+            table = table + '</tbody></table>';
+            $('#tab1_table').append(table);
+            $('#tab1_count').html((rs.result.data).length);
+            var cols = [
+                null, null, {"bSortable": false}
+            ];
+            dataTable('tab1_datatable', 'tab1', cols, 'eBay_categories_list');
         } else {
             $('#tab1_table').append(rs.result.message);
         }
@@ -194,6 +245,34 @@ function removeKeyword(id) {
     });
 }
 
+function removeCategory(id) {
+    swal({
+        title: 'Are you sure?',
+        text: 'Do you want to delete this? You can\'t recover this!',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#DD6B55',
+        confirmButtonText: 'Yes, delete it!',
+        closeOnConfirm: false,
+        showLoaderOnConfirm: true
+    }, function () {
+        var api = new $.RestClient('v1/index.php/');
+        api.add('master', {url: 'category', stripTrailingSlash: true});
+        var result = api.master.del(id);
+        result.done(function (rs) {
+            if (rs.result.error === false) {
+                showCategoriesPage();
+                swal('Success', rs.result.message, 'success');
+            } else {
+                swal('Error', rs.result.message, 'error');
+            }
+        });
+        result.fail(function (err) {
+            swal('Error', err.responseJSON.result.message, 'error');
+        });
+    });
+}
+
 function removeStaff(id) {
     swal({
         title: 'Are you sure?',
@@ -250,6 +329,29 @@ function buildStaffDropdown() {
             });
             $('#update_staff_id').append(options);
             $('#filter_staff_id').append(options_filter);
+        }
+    });
+    result.fail(function (err) {
+        swal('Error', err.responseJSON.result.message, 'error');
+    });
+}
+
+function buildCategoryDropdown() {
+    var api = new $.RestClient('v1/index.php/');
+    api.add('master', {url: 'category', stripTrailingSlash: true});
+    var result = api.master.read();
+    result.done(function (rs) {
+        $('#update_category_id').empty();
+        $('#filter_category_id').empty();
+        if (rs.result.error === false) {
+            var options = '<option value="">--Select category--</option>';
+            var options_filter = '<option value="">--All--</option>';
+            $.each(rs.result.data, function (index, row) {
+                options = options + '<option value="' + row.ID + '">' + row.name + '</option>';
+                options_filter = options_filter + '<option value="' + row.ID + '">' + row.name + '</option>';
+            });
+            $('#update_category_id').append(options);
+            $('#filter_category_id').append(options_filter);
         }
     });
     result.fail(function (err) {

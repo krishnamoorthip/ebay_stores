@@ -3,7 +3,7 @@ $lists = array(array('href' => 'stores.php', 'icon' => 'fa-home', 'name' => 'Sto
 $menu = '';
 $active = isset($active) ? $active : '';
 if (isset($_SESSION) && $_SESSION['name'] == 'Admin') {
-    array_push($lists, array('href' => 'keywords.php', 'icon' => 'fa-key', 'name' => 'Keywords'), array('href' => 'staffs.php', 'icon' => 'fa-user', 'name' => 'Staffs'));
+    array_push($lists, array('href' => 'keywords.php', 'icon' => 'fa-key', 'name' => 'Keywords'), array('href' => 'categories.php', 'icon' => 'fa-leaf', 'name' => 'Categories'), array('href' => 'staffs.php', 'icon' => 'fa-user', 'name' => 'Staffs'));
 }
 foreach ($lists as $list) {
     if ($list['name'] === $active) {

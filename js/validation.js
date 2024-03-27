@@ -123,6 +123,14 @@ $(function () {
                         case 2:
                             status = 'Follow-up';
                             break;
+                        case '3':
+                        case 3:
+                            status = 'Unreachable';
+                            break;
+                        case '4':
+                        case 4:
+                            status = 'Not live';
+                            break;
                         default:
                             break;
                     }
@@ -131,6 +139,7 @@ $(function () {
                     $('#comment_' + rs.result.data.ID).html((removeTags(rs.result.data.comment) && (removeTags(rs.result.data.comment)).length > 200 ? (removeTags(rs.result.data.comment).substring(0, 197) + '...&nbsp;<a class="pointer" onclick="openModal(\'update_store\', ' + rs.result.data.ID + ');">Read more</a>') : removeTags(rs.result.data.comment)));
                     $('#status_' + rs.result.data.ID).html(status);
                     $('#lead_by_' + rs.result.data.ID).html((rs.result.data.staff ? rs.result.data.staff : '-'));
+                    $('#category_' + rs.result.data.ID).html((rs.result.data.category ? rs.result.data.category : '-'));
                 } else {
                     swal('Error', rs.result.message, 'error');
                 }
@@ -321,6 +330,101 @@ $(function () {
                     $('#update_staff').modal('hide');
                     swal('Success', rs.result.message, 'success');
                     showStaffsPage();
+                } else {
+                    swal('Error', rs.result.message, 'error');
+                }
+            });
+            result.fail(function (err) {
+                swal('Error', err.responseJSON.result.message, 'error');
+            });
+            return false;
+        }
+    });
+
+    $('#category_form').validate({
+        errorElement: 'div',
+        errorClass: 'help-block',
+        rules: {
+            name: {
+                required: {
+                    depends: function () {
+                        $(this).val($(this).val());
+                        return true;
+                    }
+                }
+            }
+        },
+        messages: {
+            name: {
+                required: 'Please fill this field.'
+            }
+        },
+        highlight: function (e) {
+            $(e).closest('.form-group').removeClass('has-info').addClass('has-error');
+        },
+        success: function (e) {
+            $(e).closest('.form-group').removeClass('has-error'); //.addClass('has-info');
+            $(e).remove();
+        },
+        errorPlacement: errorPlacement,
+        submitHandler: function (form) {
+            var data = new FormData(form);
+            var api = new $.RestClient('v1/index.php/');
+            api.add('master', {url: 'category', stripTrailingSlash: true, multipart: true, methodOverride: true});
+            var result = api.master.create(data);
+            result.done(function (rs) {
+                if (rs.result.error === false) {
+                    $('#add_category').modal('hide');
+                    swal('Success', rs.result.message, 'success');
+                    showCategoriesPage();
+                } else {
+                    swal('Error', rs.result.message, 'error');
+                }
+            });
+            result.fail(function (err) {
+                swal('Error', err.responseJSON.result.message, 'error');
+            });
+            return false;
+        }
+    });
+
+    $('#update_category_form').validate({
+        errorElement: 'div',
+        errorClass: 'help-block',
+        rules: {
+            update_name: {
+                required: {
+                    depends: function () {
+                        $(this).val($(this).val());
+                        return true;
+                    }
+                }
+            }
+        },
+        messages: {
+            update_name: {
+                required: 'Please fill this field.'
+            }
+        },
+        highlight: function (e) {
+            $(e).closest('.form-group').removeClass('has-info').addClass('has-error');
+        },
+        success: function (e) {
+            $(e).closest('.form-group').removeClass('has-error'); //.addClass('has-info');
+            $(e).remove();
+        },
+        errorPlacement: errorPlacement,
+        submitHandler: function (form) {
+            var data = new FormData(form);
+            data.append('update_name_id', $('#update_name_id').val());
+            var api = new $.RestClient('v1/index.php/');
+            api.add('master', {url: 'category', stripTrailingSlash: true, multipart: true, methodOverride: true});
+            var result = api.master.update(data);
+            result.done(function (rs) {
+                if (rs.result.error === false) {
+                    $('#update_category').modal('hide');
+                    swal('Success', rs.result.message, 'success');
+                    showCategoriesPage();
                 } else {
                     swal('Error', rs.result.message, 'error');
                 }
